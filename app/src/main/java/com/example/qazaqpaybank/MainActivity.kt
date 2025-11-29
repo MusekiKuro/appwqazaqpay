@@ -21,6 +21,8 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = "login"
                 ) {
+                    composable("qr") { QRScreen(navController) }
+
                     composable("login") {
                         LoginScreen(
                             onLoginSuccess = { email ->
@@ -46,6 +48,10 @@ class MainActivity : ComponentActivity() {
                     composable("transfer") { TransferScreen(navController) }
                     composable("history") { HistoryScreen(navController) }
                     composable("investments") { InvestmentDashboardScreen(navController) }
+                    composable("cardDetails") { CardDetailsScreen(navController) }
+                    composable("bills") { BillsScreen(navController) }
+
+
                 }
             }
         }

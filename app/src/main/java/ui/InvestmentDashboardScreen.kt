@@ -17,49 +17,54 @@ import com.example.qazaqpaybank.ui.theme.TealPrimary
 
 @Composable
 fun InvestmentDashboardScreen(navController: NavHostController) {
-    Column(
-        Modifier
-            .fillMaxSize()
-            .background(BG)
-            .padding(24.dp)
-    ) {
-        Text("Portfolio Value", style = MaterialTheme.typography.titleMedium, color = Navy)
-
-        Box(
+    Scaffold(
+        bottomBar = { BottomNavBar(navController = navController, currentRoute = "investments") },
+        containerColor = BG
+    ) { padding ->
+        Column(
             Modifier
-                .fillMaxWidth()
-                .height(180.dp)
-                .background(TealPrimary.copy(alpha = 0.07f), shape = MaterialTheme.shapes.medium),
+                .fillMaxSize()
+                .padding(padding)
+                .padding(24.dp)
         ) {
-            Text(
-                "$12,000",
-                Modifier.align(Alignment.Center),
-                fontWeight = FontWeight.Bold,
-                color = Navy,
-                style = MaterialTheme.typography.headlineMedium
-            )
-        }
+            Text("Portfolio Value", style = MaterialTheme.typography.titleMedium, color = Navy)
 
-        Spacer(Modifier.height(24.dp))
-
-        var selectedTab by remember { mutableIntStateOf(0) }
-        val periods = listOf("Day", "Week", "Month")
-
-        TabRow(
-            selectedTabIndex = selectedTab,
-            containerColor = CardWhite
-        ) {
-            periods.forEachIndexed { idx, label ->
-                Tab(
-                    text = { Text(label) },
-                    selected = selectedTab == idx,
-                    onClick = { selectedTab = idx }
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .background(TealPrimary.copy(alpha = 0.07f), shape = MaterialTheme.shapes.medium),
+            ) {
+                Text(
+                    "$12,000",
+                    Modifier.align(Alignment.Center),
+                    fontWeight = FontWeight.Bold,
+                    color = Navy,
+                    style = MaterialTheme.typography.headlineMedium
                 )
             }
+
+            Spacer(Modifier.height(24.dp))
+
+            var selectedTab by remember { mutableIntStateOf(0) }
+            val periods = listOf("Day", "Week", "Month")
+
+            TabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = CardWhite
+            ) {
+                periods.forEachIndexed { idx, label ->
+                    Tab(
+                        text = { Text(label) },
+                        selected = selectedTab == idx,
+                        onClick = { selectedTab = idx }
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+
+            Text("Investment features coming soon...", color = Navy, style = MaterialTheme.typography.bodyLarge)
         }
-
-        Spacer(Modifier.height(24.dp))
-
-        Text("Investment features coming soon...", color = Navy, style = MaterialTheme.typography.bodyLarge)
     }
 }

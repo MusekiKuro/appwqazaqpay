@@ -51,10 +51,11 @@ fun HistoryScreen(
                 }
             }
         },
+        bottomBar = { BottomNavBar(navController = navController, currentRoute = "history") },
         containerColor = BG
     ) { padding ->
         LazyColumn(
-            contentPadding = PaddingValues(top = 8.dp, bottom = 64.dp),
+            contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp),
             modifier = Modifier.padding(padding)
         ) {
             items(transactions) { txn ->

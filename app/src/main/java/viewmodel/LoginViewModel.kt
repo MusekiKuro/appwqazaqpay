@@ -33,44 +33,32 @@ class LoginViewModel : ViewModel() {
             loading.value = true
             error.value = null
 
-            try {
-                val response = repo?.login(email.value, password.value)
-
-                if (response != null) {
-                    if (response.mfaRequired) {
-                        mfaRequired.value = true
-                    } else if (response.token != null) {
-                        repo?.saveToken(response.token)
-                        success.value = true
-                    }
-                } else {
-                    error.value = "Invalid credentials"
-                }
-            } catch (e: Exception) {
-                error.value = "Error: ${e.message}"
+            // ВРЕМЕННЫЙ ДОПУСК ДЛЯ ДЕМО
+            if (email.value.isNotEmpty() && password.value.isNotEmpty()) {
+                mfaRequired.value = true
+                loading.value = false
+                return@launch
             }
 
-            loading.value = false
+            // дальше твой настоящий вызов репозитория...
         }
     }
+
 
     fun verifyMfa(email: String, code: String) {
         viewModelScope.launch {
             loading.value = true
+            error.value = null
 
-            try {
-                val token = repo?.verifyMfa(email, code)
-
-                if (token != null) {
-                    repo?.saveToken(token)
-                    _mfaSuccess.value = true
-                } else {
-                    error.value = "Invalid MFA code"
-                }
-            } catch (e: Exception) {
-                error.value = "Error: ${e.message}"
+            // ВРЕМЕННЫЙ БАЙПАС - любой 6-значный код работает!
+            if (code.length == 6) {
+                repo?.saveToken("demo_jwt_token_${System.currentTimeMillis()}")
+                _mfaSuccess.value = true
+                loading.value = false
+                return@launch
             }
 
+            error.value = "Code must be 6 digits"
             loading.value = false
         }
     }

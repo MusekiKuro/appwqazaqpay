@@ -1,35 +1,88 @@
 package com.example.qazaqpaybank.data
 
 import android.content.Context
+import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
-private val Context.dataStore by preferencesDataStore(name = "settings")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "auth")
 
 class AuthRepository(private val context: Context) {
 
-    private val TOKEN_KEY = stringPreferencesKey("jwt_token")
+    private val tokenKey = stringPreferencesKey("jwt_token")
 
     suspend fun saveToken(token: String) {
-        context.dataStore.edit { preferences ->
-            preferences[TOKEN_KEY] = token
+        context.dataStore.edit { prefs ->
+            prefs[tokenKey] = token
         }
     }
 
-    val tokenFlow: Flow<String?> = context.dataStore.data.map { preferences ->
-        preferences[TOKEN_KEY]
+    suspend fun getToken(): String? {
+        return context.dataStore.data.map { prefs ->
+            prefs[tokenKey]
+        }.firstOrNull()
     }
 
     suspend fun login(email: String, password: String): LoginResponse? {
-        val response = ApiClient.apiService.login(LoginRequest(email, password))
-        return if (response.isSuccessful) response.body() else null
+        return try {
+            Log.d("AuthRepository", "Attempting login for: $email")
+
+            val response = ApiClient.apiService.login(LoginRequest(email, password))
+
+            Log.d("AuthRepository", "Response code: ${response.code()}")
+            Log.d("AuthRepository", "Response body: ${response.body()}")
+
+            if (response.isSuccessful) {
+                val body = response.body()
+
+                // ФИКС: Если токена нет и есть сообщение про MFA - значит MFA нужен!
+                if (body?.token == null && body?.message?.contains("MFA", ignoreCase = true) == true) {
+                    Log.d("AuthRepository", "MFA required detected from message")
+                    // Возвращаем исправленный ответ
+                    return LoginResponse(
+                        token = null,
+                        mfaRequired = true,  // ← ФИКСИМ ТУТ!
+                        message = body.message
+                    )
+                }
+
+                body
+            } else {
+                val errorBody = response.errorBody()?.string()
+                Log.e("AuthRepository", "Error body: $errorBody")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Exception during login", e)
+            e.printStackTrace()
+            null
+        }
     }
 
+
     suspend fun verifyMfa(email: String, code: String): String? {
-        val response = ApiClient.apiService.verifyMfa(MfaRequest(email, code))
-        return if (response.isSuccessful) response.body()?.token else null
+        return try {
+            Log.d("AuthRepository", "Verifying MFA for: $email with code: $code")
+
+            val response = ApiClient.apiService.verifyMfa(MfaRequest(email, code))
+
+            Log.d("AuthRepository", "MFA Response code: ${response.code()}")
+            Log.d("AuthRepository", "MFA Response body: ${response.body()}")
+
+            if (response.isSuccessful) {
+                response.body()?.token
+            } else {
+                Log.e("AuthRepository", "MFA Error: ${response.errorBody()?.string()}")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Exception during MFA", e)
+            null
+        }
     }
 }

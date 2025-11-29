@@ -21,10 +21,11 @@ data class MfaRequest(
 
 @JsonClass(generateAdapter = true)
 data class LoginResponse(
-    val token: String? = null,
-    val mfaRequired: Boolean = false,
-    val message: String = ""
+    @Json(name = "token") val token: String? = null,
+    @Json(name = "mfaRequired") val mfaRequired: Boolean = false,
+    @Json(name = "message") val message: String = ""
 )
+
 
 @JsonClass(generateAdapter = true)
 data class Card(
