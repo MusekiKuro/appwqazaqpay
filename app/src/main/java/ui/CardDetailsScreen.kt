@@ -119,7 +119,7 @@ fun CardDetailsScreen(navController: NavHostController) {
             Text("Card Information", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Navy)
             Spacer(Modifier.height(16.dp))
 
-            InfoCard("Balance", "$$currentLimit")
+            InfoCard("Balance", "$${currentLimit}")
             Spacer(Modifier.height(12.dp))
             InfoCard("Card Number", "**** **** **** 1234")
             Spacer(Modifier.height(12.dp))

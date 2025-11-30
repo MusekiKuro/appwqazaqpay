@@ -3,9 +3,11 @@ package com.example.qazaqpaybank
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
 import androidx.navigation.NavType
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.qazaqpaybank.ui.*
 import com.example.qazaqpaybank.ui.theme.QazaqPayBankTheme
@@ -30,7 +32,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-// И обнови login:
                     composable("login") {
                         LoginScreen(
                             onLoginSuccess = { email ->
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("home")
                                 }
                             },
-                            navController = navController // ← ДОБАВЬ ЭТО
+                            navController = navController
                         )
                     }
 

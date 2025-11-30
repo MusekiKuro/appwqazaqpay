@@ -7,9 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.qazaqpaybank"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.qazaqpaybank"
@@ -58,49 +56,33 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    dependencies {
-        // Существующие зависимости остаются...
+    
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.6")
 
-        // Compose
-        implementation("androidx.compose.ui:ui:1.5.4")
-        implementation("androidx.compose.material3:material3:1.1.2")
-        implementation("androidx.compose.ui:ui-tooling-preview:1.5.4")
-        implementation("androidx.activity:activity-compose:1.8.2")
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
-        // Navigation
-        implementation("androidx.navigation:navigation-compose:2.7.6")
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 
-        // ViewModel
-        implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    // QR Code
+    implementation("com.google.zxing:core:3.5.2")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
-        // Retrofit
-        implementation("com.squareup.retrofit2:retrofit:2.9.0")
-        implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
-        implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-        kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-        // QR Code
-        implementation("com.google.zxing:core:3.5.2")
-        implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-
-        // DataStore
-        implementation("androidx.datastore:datastore-preferences:1.0.0")
-
-        // Coroutines
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-        implementation("androidx.compose.material:material-icons-extended:1.5.4")
-        implementation("com.google.ai.client.generativeai:generativeai:0.1.2")
-        implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-        implementation("com.squareup.retrofit2:retrofit:2.9.0")
-        implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-        implementation("com.google.code.gson:gson:2.10.1")
-
-        // Coroutines для async работы
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-    }
+    // Material Icons Extended
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+    
+    // Generative AI
+    implementation("com.google.ai.client.generativeai:generativeai:0.1.2")
 
 }
 

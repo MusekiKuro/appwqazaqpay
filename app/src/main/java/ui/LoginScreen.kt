@@ -173,22 +173,21 @@ fun LoginScreen(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
-                // В конце LoginScreen, после кнопки "Войти"
-                Spacer(Modifier.height(16.dp))
+            }
 
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+            Spacer(Modifier.height(16.dp))
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text("Нет аккаунта? ", color = Color(0xFF8E8E93), fontSize = 14.sp)
+                TextButton(
+                    onClick = { navController.navigate("register") },
+                    contentPadding = PaddingValues(0.dp)
                 ) {
-                    Text("Нет аккаунта? ", color = Color(0xFF8E8E93), fontSize = 14.sp)
-                    TextButton(
-                        onClick = { navController.navigate("register") },
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text("Зарегистрироваться", color = Color(0xFF4A90E2), fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    }
+                    Text("Зарегистрироваться", color = Color(0xFF4A90E2), fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
-
             }
 
             if (error != null) {

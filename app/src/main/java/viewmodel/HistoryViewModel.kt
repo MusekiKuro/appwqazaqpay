@@ -20,7 +20,7 @@ class HistoryViewModel : ViewModel() {
             Transaction("2", "Salary", 2000.00, "Yesterday", "SL"),
             Transaction("3", "Netflix", -15.00, "Jun 10", "NF"),
             Transaction("4", "Coffee Shop", -5.50, "Jun 09", "CF"),
-            Transaction("5", "Gym Membership", -50.00, "Jun 08", "GM"),
+            Transaction("5", "Gym Membership", -50.00, "Jun 08", "GM")
         )
     )
 

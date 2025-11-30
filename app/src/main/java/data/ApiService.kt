@@ -1,21 +1,13 @@
 package com.example.qazaqpaybank.data
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 
-
-
-@JsonClass(generateAdapter = true)
 data class MfaRequest(
     val email: String,
     val code: String
 )
 
-@JsonClass(generateAdapter = true)
 data class Card(
     val id: Long,
     val cardNumber: String,
@@ -26,7 +18,6 @@ data class Card(
     val accountNumber: String
 )
 
-@JsonClass(generateAdapter = true)
 data class Account(
     val id: Long,
     val accountNumber: String,
