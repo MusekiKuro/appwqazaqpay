@@ -50,6 +50,11 @@ class MainActivity : ComponentActivity() {
                     composable("investments") { InvestmentDashboardScreen(navController) }
                     composable("cardDetails") { CardDetailsScreen(navController) }
                     composable("bills") { BillsScreen(navController) }
+                    composable("services") { ServicesScreen(navController) }
+                    composable("profile") { ProfileScreen(navController) }
+                    composable("faq") { FaqScreen(navController) }
+                    composable("loan") { LoanScreen(navController) }
+                    composable("chat") { ChatScreen(navController) }
 
 
                 }

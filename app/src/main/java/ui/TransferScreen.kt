@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -15,208 +14,270 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.qazaqpaybank.ui.theme.BG
-import com.example.qazaqpaybank.ui.theme.CardWhite
-import com.example.qazaqpaybank.ui.theme.Navy
-import com.example.qazaqpaybank.ui.theme.TealPrimary
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransferScreen(navController: NavHostController) {
-    var amount by remember { mutableStateOf("") }
-    var recipientCard by remember { mutableStateOf("") }
-    var selectedCard by remember { mutableStateOf("**** **** **** 1234") }
+    var selectedTab by remember { mutableIntStateOf(0) }
+    var selectedCard by remember { mutableStateOf("Основная карта •••• 1234, 150 000 ₸") }
     var showCardSelector by remember { mutableStateOf(false) }
+    var recipientCard by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+    var comment by remember { mutableStateOf("") }
     var showSuccess by remember { mutableStateOf(false) }
 
     val cards = listOf(
-        "**** **** **** 1234" to "Balance: $50,000",
-        "**** **** **** 5678" to "Balance: $30,000",
-        "**** **** **** 9012" to "Balance: $100,000 (Blocked)"
+        "Основная карта •••• 1234, 150 000 ₸",
+        "Kaspi Gold •••• 5678, 1 240 890 ₸",
+        "Депозит •••• 9012, 5 000 $"
     )
+
+    val tabs = listOf("Свой счёт", "На карту другого банка", "По номеру телефона", "Международный")
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Transfer Money", fontWeight = FontWeight.Bold) },
+                title = { Text("Перевод", fontWeight = FontWeight.Bold, fontSize = 20.sp) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Назад", tint = Color(0xFF1A1A1A))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = BG,
-                    titleContentColor = Navy
+                    containerColor = Color.White,
+                    titleContentColor = Color(0xFF1A1A1A)
                 )
             )
         },
         bottomBar = { BottomNavBar(navController = navController, currentRoute = "transfer") },
-        containerColor = BG
+        containerColor = Color(0xFFF8F9FA)
     ) { padding ->
         Column(
             Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp)
         ) {
-            // From Card
-            Text("From Card", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = Navy)
-            Spacer(Modifier.height(8.dp))
-
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .background(CardWhite, RoundedCornerShape(12.dp))
-                    .clickable { showCardSelector = !showCardSelector }
-                    .padding(16.dp)
+            ScrollableTabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = Color.White,
+                contentColor = Color(0xFF4A90E2),
+                edgePadding = 0.dp,
+                indicator = { tabPositions ->
+                    TabRowDefaults.SecondaryIndicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                        color = Color(0xFF4A90E2),
+                        height = 3.dp
+                    )
+                }
             ) {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(selectedCard, fontWeight = FontWeight.Bold, color = Navy)
-                        Text(
-                            cards.find { it.first == selectedCard }?.second ?: "",
-                            fontSize = 12.sp,
-                            color = Navy.copy(alpha = 0.6f)
-                        )
-                    }
-                    Icon(
-                        if (showCardSelector) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
-                        contentDescription = null,
-                        tint = TealPrimary
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = {
+                            Text(
+                                title,
+                                fontSize = 14.sp,
+                                fontWeight = if (selectedTab == index) FontWeight.SemiBold else FontWeight.Normal,
+                                color = if (selectedTab == index) Color(0xFF4A90E2) else Color(0xFF8E8E93)
+                            )
+                        },
+                        modifier = Modifier.padding(vertical = 16.dp)
                     )
                 }
             }
 
-            // Card Selector
-            if (showCardSelector) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .background(Color.White)
+                    .padding(24.dp)
+            ) {
+                Text(
+                    "Откуда",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF8E8E93)
+                )
                 Spacer(Modifier.height(8.dp))
-                Column(
+
+                Box(
                     Modifier
                         .fillMaxWidth()
-                        .background(CardWhite, RoundedCornerShape(12.dp))
-                        .padding(8.dp)
+                        .background(Color(0xFFF8F9FA), RoundedCornerShape(12.dp))
+                        .clickable { showCardSelector = !showCardSelector }
+                        .padding(16.dp)
                 ) {
-                    cards.forEach { (cardNumber, balance) ->
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    selectedCard = cardNumber
-                                    showCardSelector = false
-                                }
-                                .padding(12.dp)
-                        ) {
-                            Column {
-                                Text(cardNumber, fontWeight = FontWeight.SemiBold)
-                                Text(balance, fontSize = 12.sp, color = Navy.copy(alpha = 0.6f))
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            selectedCard,
+                            fontSize = 15.sp,
+                            color = Color(0xFF1A1A1A),
+                            modifier = Modifier.weight(1f)
+                        )
+                        Icon(
+                            if (showCardSelector) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                            contentDescription = null,
+                            tint = Color(0xFF8E8E93)
+                        )
+                    }
+                }
+
+                if (showCardSelector) {
+                    Spacer(Modifier.height(8.dp))
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFF8F9FA), RoundedCornerShape(12.dp))
+                            .padding(4.dp)
+                    ) {
+                        cards.forEach { card ->
+                            Text(
+                                card,
+                                fontSize = 15.sp,
+                                color = Color(0xFF1A1A1A),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        selectedCard = card
+                                        showCardSelector = false
+                                    }
+                                    .padding(12.dp)
+                            )
+                            if (card != cards.last()) {
+                                Divider(color = Color(0xFFE5E5EA))
                             }
                         }
-                        if (cardNumber != cards.last().first) {
-                            Divider()
+                    }
+                }
+
+                Spacer(Modifier.height(24.dp))
+
+                Text(
+                    "Куда",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF8E8E93)
+                )
+                Spacer(Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = recipientCard,
+                    onValueChange = { recipientCard = it },
+                    placeholder = { Text("Введите номер карты", color = Color(0xFFBDBDBD), fontSize = 15.sp) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFFF8F9FA),
+                        unfocusedContainerColor = Color(0xFFF8F9FA),
+                        focusedBorderColor = Color(0xFF4A90E2),
+                        unfocusedBorderColor = Color.Transparent
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true,
+                    textStyle = LocalTextStyle.current.copy(fontSize = 15.sp)
+                )
+
+                Spacer(Modifier.height(24.dp))
+
+                Text(
+                    "Сумма",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF8E8E93)
+                )
+                Spacer(Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = amount,
+                    onValueChange = { amount = it },
+                    placeholder = { Text("0", color = Color(0xFFBDBDBD), fontSize = 15.sp) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFFF8F9FA),
+                        unfocusedContainerColor = Color(0xFFF8F9FA),
+                        focusedBorderColor = Color(0xFF4A90E2),
+                        unfocusedBorderColor = Color.Transparent
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    trailingIcon = { Text("₸", color = Color(0xFF8E8E93), fontSize = 16.sp, modifier = Modifier.padding(end = 8.dp)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    textStyle = LocalTextStyle.current.copy(fontSize = 15.sp)
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                Text(
+                    "Комиссия: 0 ₸",
+                    fontSize = 13.sp,
+                    color = Color(0xFF8E8E93)
+                )
+
+                Spacer(Modifier.height(24.dp))
+
+                Text(
+                    "Комментарий",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF8E8E93)
+                )
+                Spacer(Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = comment,
+                    onValueChange = { comment = it },
+                    placeholder = { Text("Необязательно", color = Color(0xFFBDBDBD), fontSize = 15.sp) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFFF8F9FA),
+                        unfocusedContainerColor = Color(0xFFF8F9FA),
+                        focusedBorderColor = Color(0xFF4A90E2),
+                        unfocusedBorderColor = Color.Transparent
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    maxLines = 3,
+                    textStyle = LocalTextStyle.current.copy(fontSize = 15.sp)
+                )
+
+                Spacer(Modifier.height(32.dp))
+
+                Button(
+                    onClick = {
+                        if (amount.isNotEmpty() && recipientCard.isNotEmpty()) {
+                            showSuccess = true
                         }
-                    }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4A90E2)),
+                    shape = RoundedCornerShape(16.dp),
+                    enabled = amount.isNotEmpty() && recipientCard.isNotEmpty()
+                ) {
+                    Text(
+                        "Перевести",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 }
-            }
-
-            Spacer(Modifier.height(24.dp))
-
-            // Recipient Card
-            Text("To Card Number", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = Navy)
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = recipientCard,
-                onValueChange = { recipientCard = it },
-                placeholder = { Text("Enter 16-digit card number") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = CardWhite,
-                    unfocusedContainerColor = CardWhite,
-                    focusedBorderColor = TealPrimary
-                ),
-                leadingIcon = {
-                    Icon(Icons.Filled.CreditCard, contentDescription = null, tint = TealPrimary)
-                }
-            )
-
-            Spacer(Modifier.height(24.dp))
-
-            // Amount
-            Text("Amount", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = Navy)
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = amount,
-                onValueChange = { amount = it },
-                placeholder = { Text("Enter amount") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = CardWhite,
-                    unfocusedContainerColor = CardWhite,
-                    focusedBorderColor = TealPrimary
-                ),
-                leadingIcon = {
-                    Text("$", fontSize = 24.sp, color = TealPrimary, modifier = Modifier.padding(start = 12.dp))
-                }
-            )
-
-            Spacer(Modifier.height(32.dp))
-
-            // Quick amounts
-            Text("Quick Amount", fontSize = 14.sp, color = Navy.copy(alpha = 0.7f))
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                listOf("1000", "5000", "10000").forEach { quickAmount ->
-                    Button(
-                        onClick = { amount = quickAmount },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = CardWhite,
-                            contentColor = Navy
-                        ),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text("$quickAmount")
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(32.dp))
-
-            // Transfer Button
-            Button(
-                onClick = {
-                    if (amount.isNotEmpty() && recipientCard.length == 16) {
-                        showSuccess = true
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = TealPrimary),
-                shape = RoundedCornerShape(12.dp),
-                enabled = amount.isNotEmpty() && recipientCard.length == 16
-            ) {
-                Text("Transfer $${amount.ifEmpty { "0" }}", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
         }
 
-        // Success Dialog
         if (showSuccess) {
             AlertDialog(
                 onDismissRequest = { showSuccess = false },
@@ -224,16 +285,18 @@ fun TransferScreen(navController: NavHostController) {
                     Icon(
                         Icons.Filled.CheckCircle,
                         contentDescription = null,
-                        tint = TealPrimary,
+                        tint = Color(0xFF34C759),
                         modifier = Modifier.size(64.dp)
                     )
                 },
-                title = { Text("Transfer Successful!", textAlign = androidx.compose.ui.text.style.TextAlign.Center) },
+                title = { Text("Перевод выполнен!", color = Color(0xFF1A1A1A), fontWeight = FontWeight.Bold) },
                 text = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Amount: $$amount")
-                        Text("To: $recipientCard")
-                        Text("From: $selectedCard")
+                        Text("Сумма: $amount ₸", color = Color(0xFF8E8E93))
+                        Text("Получатель: $recipientCard", color = Color(0xFF8E8E93))
+                        if (comment.isNotEmpty()) {
+                            Text("Комментарий: $comment", color = Color(0xFF8E8E93))
+                        }
                     }
                 },
                 confirmButton = {
@@ -242,11 +305,12 @@ fun TransferScreen(navController: NavHostController) {
                             showSuccess = false
                             amount = ""
                             recipientCard = ""
+                            comment = ""
                             navController.navigate("home")
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = TealPrimary)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4A90E2))
                     ) {
-                        Text("Done")
+                        Text("Готово")
                     }
                 }
             )
