@@ -46,9 +46,11 @@ class AuthRepository(private val context: Context) {
                     // Возвращаем исправленный ответ
                     return LoginResponse(
                         token = null,
-                        mfaRequired = true,  // ← ФИКСИМ ТУТ!
-                        message = body.message
+                        email = email,
+                        message = "Требуется MFA",
+                        mfaRequired = true
                     )
+
                 }
 
                 body

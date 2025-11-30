@@ -23,6 +23,14 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable("qr") { QRScreen(navController) }
 
+                    composable("register") {
+                        RegisterScreen(
+                            onRegisterSuccess = { navController.navigate("login") },
+                            onLoginClick = { navController.navigate("login") }
+                        )
+                    }
+
+// И обнови login:
                     composable("login") {
                         LoginScreen(
                             onLoginSuccess = { email ->
@@ -31,9 +39,11 @@ class MainActivity : ComponentActivity() {
                                 } else {
                                     navController.navigate("home")
                                 }
-                            }
+                            },
+                            navController = navController // ← ДОБАВЬ ЭТО
                         )
                     }
+
                     composable(
                         "mfa/{email}",
                         arguments = listOf(navArgument("email") { type = NavType.StringType })
